@@ -2,3 +2,18 @@
 workspace/
 *.db
 __pycache__/
+
+# Secrets
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+
+# Runtime data
+runs.db
+*.sqlite
+*.log
+.vscode/
+.DS_Store
+.env
