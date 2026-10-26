@@ -119,7 +119,7 @@ def set_example(text):
 st.markdown("### Request")
 cols = st.columns(len(EXAMPLES))
 for col, (label, text) in zip(cols, EXAMPLES):
-    col.button(label, on_click=set_example, args=(text,), use_container_width=True)
+        col.button(label, on_click=set_example, args=(text,))
 
 request_text = st.text_area("What should the assistant do?", key="request_text", height=110,
                             placeholder="e.g. Summarize https://en.wikipedia.org/wiki/Git in 3 sentences.")
