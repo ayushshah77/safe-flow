@@ -62,3 +62,16 @@ class WcOut(BaseModel): words: int
 @action("word_count", "Count words in text", WcIn, WcOut)
 def word_count(a: WcIn) -> WcOut:
     return WcOut(words=len(a.text.split()))
+
+class NotifyIn(BaseModel):
+    message: str = Field(max_length=2000)
+
+class NotifyOut(BaseModel):
+    logged: bool
+
+@action("notify", "Write a message to the local notifications log", NotifyIn, NotifyOut)
+def notify(a: NotifyIn) -> NotifyOut:
+    WORKSPACE.mkdir(exist_ok=True)
+    with open(WORKSPACE / "notifications.log", "a") as f:
+        f.write(a.message.replace("\n", " ") + "\n")
+    return NotifyOut(logged=True)

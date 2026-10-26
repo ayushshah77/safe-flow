@@ -43,10 +43,17 @@ def execute(plan, approved: bool = False, dry_run: bool = False) -> str:
                 continue
 
         spec = REGISTRY[step.action]
-        if dry_run and spec.risk in ("write", "network"):
-            ctx["steps"][step.id] = {"status": "dry_run", "output": {}}
-            log_event(run_id, step.id, "dry_run", {"action": step.action})
-            continue
+        if dry_run:
+            skip = spec.risk in ("write", "network")
+            if not skip:
+                try:
+                    render(step.args, ctx)
+                except Exception:
+                    skip = True  # depends on output of a step skipped in this dry run
+            if skip:
+                ctx["steps"][step.id] = {"status": "dry_run", "output": {}}
+                log_event(run_id, step.id, "dry_run", {"action": step.action})
+                continue
         if spec.risk == "write" and not approved:
             log_event(run_id, step.id, "blocked_needs_approval", {})
             log_event(run_id, None, "run_finished", {"status": "blocked"})
